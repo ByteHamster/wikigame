@@ -72,26 +72,18 @@ public class ActivityMain extends AppCompatActivity {
                 super.onPageStarted(view, url, favicon);
                 findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
                 wv.setEnabled(false);
-                wv.setAlpha(0.3f);
+                wv.setAlpha(0.2f);
 
                 if(findURL.equals("") && !url.equals(RANDOM_ARTICLE)) {
                     findURL = url;
                 }
-                if(!url.contains("m.wikipedia.org")) {
-                    Toast.makeText(getBaseContext(), "Externer Link blockiert", Toast.LENGTH_LONG).show();
-                    wv.loadUrl(wv.getUrl());
-                }
+
                 if (state == State.RANDOM) {
                     state = State.SELECT;
                 } else if (state == State.SELECT) {
                     state = State.SELECTED;
-                } else if(state == State.SELECTED && !url.equals(findURL)) {
-                    wv.loadUrl(findURL);
-                    Toast.makeText(getBaseContext(), "Starten bitte", Toast.LENGTH_LONG).show();
                 } else if(state == State.SELECTED) {
                     //ignore
-                } else if(state == State.FOUND && !url.equals(findURL)) {
-                    Toast.makeText(getBaseContext(), "Bereits gewonnen", Toast.LENGTH_LONG).show();
                 } else if(url.equals(findURL)) {
                     steps++;
                     state = State.FOUND;
@@ -126,8 +118,10 @@ public class ActivityMain extends AppCompatActivity {
                 }
                 if(state == State.SELECTED && !url.equals(findURL)) {
                     Toast.makeText(getBaseContext(), "Starten bitte", Toast.LENGTH_LONG).show();
+                    return true;
                 } else if(state == State.FOUND && !url.equals(findURL)) {
                     Toast.makeText(getBaseContext(), "Bereits gewonnen", Toast.LENGTH_LONG).show();
+                    return true;
                 }
                 return false;
             }
@@ -135,10 +129,10 @@ public class ActivityMain extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                view.loadUrl("javascript:$(\".header-container\").hide(0);");
                 findViewById(R.id.progressBar).setVisibility(View.GONE);
                 wv.setEnabled(true);
                 wv.setAlpha(1.0f);
-                view.loadUrl("javascript:$(\".header-container\").hide(0);");
 
                 if(!view.getTitle().equals(RANDOM_ARTICLE) && !url.equals(findURL)) {
                     history += view.getTitle().replace(" – Wikipedia", "") + "\n";
@@ -166,26 +160,32 @@ public class ActivityMain extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.restart) {
-            state = State.RANDOM;
-            history = "";
-            findURL = "";
-            steps = -2;
-            getSupportActionBar().setTitle("Wikipedia Game");
-            wv.loadUrl(RANDOM_ARTICLE);
-            findViewById(R.id.fab).setVisibility(View.VISIBLE);
+            AlertDialog.Builder b = new AlertDialog.Builder(this);
+            b.setMessage("Game will be restarted.");
+            b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    state = State.RANDOM;
+                    history = "";
+                    findURL = "";
+                    steps = -2;
+                    getSupportActionBar().setTitle("Wikipedia Game");
+                    wv.loadUrl(RANDOM_ARTICLE);
+                    findViewById(R.id.fab).setVisibility(View.VISIBLE);
+                }
+            });
+            b.setNegativeButton("Cancel", null);
+            b.show();
             return true;
         } else if(item.getItemId() == R.id.goal) {
             AlertDialog.Builder b = new AlertDialog.Builder(ActivityMain.this);
-            b.setMessage("Ziel der Suche:\n\n");
+            b.setTitle("Ziel der Suche\n");
             final WebView v = new WebView(this);
             v.setWebViewClient(new WebViewClient() {
                 @Override
-                public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                    super.onPageStarted(view, url, favicon);
-                    if (!url.equals(findURL)) {
-                        Toast.makeText(getBaseContext(), "Klick blockiert", Toast.LENGTH_LONG).show();
-                        v.loadUrl(findURL);
-                    }
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    Toast.makeText(getBaseContext(), "Klick blockiert", Toast.LENGTH_LONG).show();
+                    return true;
                 }
                 @Override
                 public void onPageFinished(WebView view, String url) {
