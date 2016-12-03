@@ -1,5 +1,6 @@
 package com.bytehamster.wikipediagame;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -146,5 +147,19 @@ public class ActivityMain extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setMessage("App will be closed.");
+        b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        b.setNegativeButton("Cancel", null);
+        b.show();
     }
 }
