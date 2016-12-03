@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/restart" android:title="Neustart" />
-    <item android:id="@+id/goal" android:title="Ziel anzeigen" />
+    <item android:id="@+id/restart" android:title="@string/restart" />
+    <item android:id="@+id/goal" android:title="@string/target" />
 </menu>

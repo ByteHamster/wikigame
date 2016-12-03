@@ -34,7 +34,7 @@ public class ActivityMain extends AppCompatActivity {
     String findURL = "";
     int steps = -2;
     WebView wv;
-    final String RANDOM_ARTICLE = "https://de.m.wikipedia.org/wiki/Spezial:Zuf%C3%A4llige_Seite";
+    String RANDOM_ARTICLE = "";
     String history = "";
 
     @Override
@@ -42,6 +42,7 @@ public class ActivityMain extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        RANDOM_ARTICLE = getString(R.string.random_article);
         wv = (WebView) findViewById(R.id.webview);
 
         if (savedInstanceState != null) {
@@ -50,7 +51,7 @@ public class ActivityMain extends AppCompatActivity {
             findURL = savedInstanceState.getString("findURL");
             wv.loadUrl(savedInstanceState.getString("current"));
             state = toState(savedInstanceState.getInt("state"));
-            getSupportActionBar().setTitle("Wikipedia Game (" + steps + ")");
+            getSupportActionBar().setTitle(getString(R.string.app_name) + " (" + steps + ")");
 
             if (state == State.FIND) {
                 steps--;
@@ -88,39 +89,38 @@ public class ActivityMain extends AppCompatActivity {
                     steps++;
                     state = State.FOUND;
                     AlertDialog.Builder b = new AlertDialog.Builder(ActivityMain.this);
-                    b.setTitle("Gewonnen in " + steps + " Schritten!");
+                    b.setTitle(getString(R.string.won_title, steps));
                     b.setMessage(history);
                     b.setCancelable(false);
-                    b.setNegativeButton("OK", null);
-                    b.setPositiveButton("Share", new DialogInterface.OnClickListener() {
+                    b.setNegativeButton(android.R.string.ok, null);
+                    b.setPositiveButton(R.string.share, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            String shareBody = "I just bet the Wikipedia Game in " + steps + "steps!\n\n"
-                                    + history;
+                            String shareBody = getString(R.string.share_body, steps, history);
                             Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                             sharingIntent.setType("text/plain");
                             sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-                            startActivity(Intent.createChooser(sharingIntent, "Share"));
+                            startActivity(Intent.createChooser(sharingIntent, getString(R.string.share)));
                         }
                     });
                     b.show();
                 } else {
                     steps++;
-                    getSupportActionBar().setTitle("Wikipedia Game (" + steps + ")");
+                    getSupportActionBar().setTitle(getString(R.string.app_name) + " (" + steps + ")");
                 }
             }
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if(!url.contains("m.wikipedia.org")) {
-                    Toast.makeText(getBaseContext(), "Externer Link blockiert", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), R.string.blocked_external, Toast.LENGTH_LONG).show();
                     return true;
                 }
                 if(state == State.SELECTED && !url.equals(findURL)) {
-                    Toast.makeText(getBaseContext(), "Starten bitte", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), R.string.please_start, Toast.LENGTH_LONG).show();
                     return true;
                 } else if(state == State.FOUND && !url.equals(findURL)) {
-                    Toast.makeText(getBaseContext(), "Bereits gewonnen", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), R.string.already_won, Toast.LENGTH_LONG).show();
                     return true;
                 }
                 return false;
@@ -161,30 +161,30 @@ public class ActivityMain extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.restart) {
             AlertDialog.Builder b = new AlertDialog.Builder(this);
-            b.setMessage("Game will be restarted.");
-            b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            b.setMessage(R.string.restart_warning);
+            b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     state = State.RANDOM;
                     history = "";
                     findURL = "";
                     steps = -2;
-                    getSupportActionBar().setTitle("Wikipedia Game");
+                    getSupportActionBar().setTitle(getString(R.string.app_name));
                     wv.loadUrl(RANDOM_ARTICLE);
                     findViewById(R.id.fab).setVisibility(View.VISIBLE);
                 }
             });
-            b.setNegativeButton("Cancel", null);
+            b.setNegativeButton(android.R.string.cancel, null);
             b.show();
             return true;
         } else if(item.getItemId() == R.id.goal) {
             AlertDialog.Builder b = new AlertDialog.Builder(ActivityMain.this);
-            b.setTitle("Ziel der Suche\n");
+            b.setTitle(R.string.target);
             final WebView v = new WebView(this);
             v.setWebViewClient(new WebViewClient() {
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    Toast.makeText(getBaseContext(), "Klick blockiert", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), R.string.blocked_click, Toast.LENGTH_LONG).show();
                     return true;
                 }
                 @Override
@@ -204,14 +204,14 @@ public class ActivityMain extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         AlertDialog.Builder b = new AlertDialog.Builder(this);
-        b.setMessage("App will be closed.");
-        b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        b.setMessage(R.string.close_warning);
+        b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 finish();
             }
         });
-        b.setNegativeButton("Cancel", null);
+        b.setNegativeButton(android.R.string.cancel, null);
         b.show();
     }
 
