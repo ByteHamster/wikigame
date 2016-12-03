@@ -1,6 +1,7 @@
 package com.bytehamster.wikipediagame;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -76,6 +77,19 @@ public class ActivityMain extends AppCompatActivity {
                     state = State.FOUND;
                     AlertDialog.Builder b = new AlertDialog.Builder(ActivityMain.this);
                     b.setMessage("Gefunden in " + steps + " Schritten.\n\nSCHRITTE:\n\n" + history);
+                    b.setCancelable(false);
+                    b.setNegativeButton("OK", null);
+                    b.setPositiveButton("Share", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String shareBody = "I just bet the Wikipedia Game in " + steps + "steps!\n\n"
+                                    + history;
+                            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                            sharingIntent.setType("text/plain");
+                            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                            startActivity(Intent.createChooser(sharingIntent, "Share"));
+                        }
+                    });
                     b.show();
                 } else {
                     steps++;
