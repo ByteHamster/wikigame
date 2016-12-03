@@ -42,10 +42,21 @@ public class ActivityMain extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        state = State.RANDOM;
-
         wv = (WebView) findViewById(R.id.webview);
-        wv.loadUrl(RANDOM_ARTICLE);
+
+        if (savedInstanceState != null) {
+            steps = savedInstanceState.getInt("steps");
+            history = savedInstanceState.getString("history");
+            findURL = savedInstanceState.getString("findURL");
+            wv.loadUrl(savedInstanceState.getString("current"));
+            state = toState(savedInstanceState.getInt("state"));
+        } else {
+            state = State.RANDOM;
+            wv.loadUrl(RANDOM_ARTICLE);
+        }
+
+
+
         WebSettings webSettings = wv.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
@@ -175,5 +186,49 @@ public class ActivityMain extends AppCompatActivity {
         });
         b.setNegativeButton("Cancel", null);
         b.show();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt("state", toInt(state));
+        savedInstanceState.putInt("steps", steps);
+        savedInstanceState.putString("current", wv.getUrl());
+        savedInstanceState.putString("history", history);
+        savedInstanceState.putString("findUrl", findURL);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    private int toInt(State state) {
+        switch (state) {
+            case FIND:
+                return 0;
+            case FOUND:
+                return 1;
+            case RANDOM:
+                return 2;
+            case SELECT:
+                return 3;
+            case SELECTED:
+                return 4;
+            default:
+                return 5;
+        }
+    }
+
+    private State toState(int state) {
+        switch (state) {
+            case 0:
+                return State.FIND;
+            case 1:
+                return State.FOUND;
+            case 2:
+                return State.RANDOM;
+            case 3:
+                return State.SELECT;
+            case 4:
+                return State.SELECTED;
+            default:
+                return State.RANDOM;
+        }
     }
 }
