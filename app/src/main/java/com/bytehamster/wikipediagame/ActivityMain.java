@@ -7,6 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
+import android.webkit.MimeTypeMap;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -15,6 +18,8 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class ActivityMain extends AppCompatActivity {
 
@@ -26,6 +31,7 @@ public class ActivityMain extends AppCompatActivity {
     int steps = -2;
     WebView wv;
     final String RANDOM_ARTICLE = "https://de.m.wikipedia.org/wiki/Spezial:Zuf%C3%A4llige_Seite";
+    String history = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +53,10 @@ public class ActivityMain extends AppCompatActivity {
                 if(findURL.equals("") && !url.equals(RANDOM_ARTICLE)) {
                     findURL = url;
                 }
+                if(!url.contains("m.wikipedia.org")) {
+                    Toast.makeText(getBaseContext(), "Externer Link blockiert", Toast.LENGTH_LONG).show();
+                    wv.loadUrl(wv.getUrl());
+                }
                 if (state == State.RANDOM) {
                     state = State.SELECT;
                 } else if (state == State.SELECT) {
@@ -61,7 +71,7 @@ public class ActivityMain extends AppCompatActivity {
                 } else if(url.equals(findURL)) {
                     state = State.FOUND;
                     AlertDialog.Builder b = new AlertDialog.Builder(ActivityMain.this);
-                    b.setMessage("Gefunden in " + steps + " Schritten");
+                    b.setMessage("Gefunden in " + steps + " Schritten.\n\n\nSCHRITTE:\n\n" + history);
                     b.show();
                 } else {
                     steps++;
@@ -73,6 +83,10 @@ public class ActivityMain extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 view.loadUrl("javascript:$(\".header-container\").hide(0);");
+
+                if(!view.getTitle().equals(RANDOM_ARTICLE) && !view.getTitle().equals(findURL)) {
+                    history += view.getTitle() + "\n\n";
+                }
             }
         });
 
