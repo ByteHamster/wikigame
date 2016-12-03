@@ -119,6 +119,20 @@ public class ActivityMain extends AppCompatActivity {
             }
 
             @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if(!url.contains("m.wikipedia.org")) {
+                    Toast.makeText(getBaseContext(), "Externer Link blockiert", Toast.LENGTH_LONG).show();
+                    return true;
+                }
+                if(state == State.SELECTED && !url.equals(findURL)) {
+                    Toast.makeText(getBaseContext(), "Starten bitte", Toast.LENGTH_LONG).show();
+                } else if(state == State.FOUND && !url.equals(findURL)) {
+                    Toast.makeText(getBaseContext(), "Bereits gewonnen", Toast.LENGTH_LONG).show();
+                }
+                return false;
+            }
+
+            @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 findViewById(R.id.progressBar).setVisibility(View.GONE);
