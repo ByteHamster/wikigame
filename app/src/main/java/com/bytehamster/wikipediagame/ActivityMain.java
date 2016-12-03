@@ -70,6 +70,10 @@ public class ActivityMain extends AppCompatActivity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
+                findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+                wv.setEnabled(false);
+                wv.setAlpha(0.3f);
+
                 if(findURL.equals("") && !url.equals(RANDOM_ARTICLE)) {
                     findURL = url;
                 }
@@ -117,6 +121,9 @@ public class ActivityMain extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                findViewById(R.id.progressBar).setVisibility(View.GONE);
+                wv.setEnabled(true);
+                wv.setAlpha(1.0f);
                 view.loadUrl("javascript:$(\".header-container\").hide(0);");
 
                 if(!view.getTitle().equals(RANDOM_ARTICLE) && !url.equals(findURL)) {
