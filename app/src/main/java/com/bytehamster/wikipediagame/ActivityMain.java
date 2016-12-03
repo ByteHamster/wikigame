@@ -51,10 +51,10 @@ public class ActivityMain extends AppCompatActivity {
             findURL = savedInstanceState.getString("findURL");
             wv.loadUrl(savedInstanceState.getString("current"));
             state = toState(savedInstanceState.getInt("state"));
-            getSupportActionBar().setTitle(getString(R.string.app_name) + " (" + steps + ")");
 
             if (state == State.FIND) {
                 findViewById(R.id.fab).setVisibility(View.GONE);
+                getSupportActionBar().setTitle(getString(R.string.app_name) + " (" + steps + ")");
                 steps--;
             }
         } else {
