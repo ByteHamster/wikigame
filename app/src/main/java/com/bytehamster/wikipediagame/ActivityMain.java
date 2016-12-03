@@ -71,6 +71,7 @@ public class ActivityMain extends AppCompatActivity {
                 } else if(state == State.FOUND && !url.equals(findURL)) {
                     Toast.makeText(getBaseContext(), "Bereits gewonnen", Toast.LENGTH_LONG).show();
                 } else if(url.equals(findURL)) {
+                    steps++;
                     state = State.FOUND;
                     AlertDialog.Builder b = new AlertDialog.Builder(ActivityMain.this);
                     b.setMessage("Gefunden in " + steps + " Schritten.\n\nSCHRITTE:\n\n" + history);
