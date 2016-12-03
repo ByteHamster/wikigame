@@ -6,6 +6,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebResourceRequest;
@@ -71,7 +73,7 @@ public class ActivityMain extends AppCompatActivity {
                 } else if(url.equals(findURL)) {
                     state = State.FOUND;
                     AlertDialog.Builder b = new AlertDialog.Builder(ActivityMain.this);
-                    b.setMessage("Gefunden in " + steps + " Schritten.\n\n\nSCHRITTE:\n\n" + history);
+                    b.setMessage("Gefunden in " + steps + " Schritten.\n\nSCHRITTE:\n\n" + history);
                     b.show();
                 } else {
                     steps++;
@@ -84,8 +86,8 @@ public class ActivityMain extends AppCompatActivity {
                 super.onPageFinished(view, url);
                 view.loadUrl("javascript:$(\".header-container\").hide(0);");
 
-                if(!view.getTitle().equals(RANDOM_ARTICLE) && !view.getTitle().equals(findURL)) {
-                    history += view.getTitle() + "\n\n";
+                if(!view.getTitle().equals(RANDOM_ARTICLE) && !url.equals(findURL)) {
+                    history += view.getTitle().replace(" – Wikipedia", "") + "\n";
                 }
             }
         });
@@ -99,5 +101,49 @@ public class ActivityMain extends AppCompatActivity {
                 b.setVisibility(View.GONE);
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.restart) {
+            state = State.RANDOM;
+            history = "";
+            findURL = "";
+            steps = -2;
+            getSupportActionBar().setTitle("Wikipedia Game");
+            wv.loadUrl(RANDOM_ARTICLE);
+            findViewById(R.id.fab).setVisibility(View.VISIBLE);
+            return true;
+        } else if(item.getItemId() == R.id.goal) {
+            AlertDialog.Builder b = new AlertDialog.Builder(ActivityMain.this);
+            b.setMessage("Ziel der Suche:\n\n");
+            final WebView v = new WebView(this);
+            v.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                    super.onPageStarted(view, url, favicon);
+                    if (!url.equals(findURL)) {
+                        Toast.makeText(getBaseContext(), "Klick blockiert", Toast.LENGTH_LONG).show();
+                        v.loadUrl(findURL);
+                    }
+                }
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    super.onPageFinished(view, url);
+                    view.loadUrl("javascript:$(\".header-container\").hide(0);");
+                }
+            });
+            v.loadUrl(findURL);
+            b.setView(v);
+            b.show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
