@@ -50,6 +50,11 @@ public class ActivityMain extends AppCompatActivity {
             findURL = savedInstanceState.getString("findURL");
             wv.loadUrl(savedInstanceState.getString("current"));
             state = toState(savedInstanceState.getInt("state"));
+            getSupportActionBar().setTitle("Wikipedia Game (" + steps + ")");
+
+            if (state == State.FIND) {
+                steps--;
+            }
         } else {
             state = State.RANDOM;
             wv.loadUrl(RANDOM_ARTICLE);
@@ -195,7 +200,7 @@ public class ActivityMain extends AppCompatActivity {
         savedInstanceState.putInt("steps", steps);
         savedInstanceState.putString("current", wv.getUrl());
         savedInstanceState.putString("history", history);
-        savedInstanceState.putString("findUrl", findURL);
+        savedInstanceState.putString("findURL", findURL);
         super.onSaveInstanceState(savedInstanceState);
     }
 
