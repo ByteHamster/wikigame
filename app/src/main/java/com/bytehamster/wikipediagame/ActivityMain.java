@@ -54,6 +54,7 @@ public class ActivityMain extends AppCompatActivity {
             getSupportActionBar().setTitle(getString(R.string.app_name) + " (" + steps + ")");
 
             if (state == State.FIND) {
+                findViewById(R.id.fab).setVisibility(View.GONE);
                 steps--;
             }
         } else {
