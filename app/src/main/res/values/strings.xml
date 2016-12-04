@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">Wikipedia Game</string>
+    <string name="app_name">WikiGame</string>
     <string name="random_article" formatted="false">https://en.m.wikipedia.org/wiki/Special:Random/</string>
     <string name="won_title" formatted="false">Won in %d steps</string>
     <string name="share">Share</string>
-    <string name="share_body" formatted="false">I just bet the Wikipedia Game in %d steps!\n\n%s</string>
+    <string name="share_body" formatted="false">I just bet the WikiGame in %d steps!\n\n%s</string>
     <string name="blocked_external">Blocked external page</string>
     <string name="blocked_click">Blocked click</string>
     <string name="please_start">Please start game</string>

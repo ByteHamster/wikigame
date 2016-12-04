@@ -1,4 +1,4 @@
-package com.bytehamster.wikipediagame;
+package com.bytehamster.wikigame;
 
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
@@ -13,20 +13,12 @@ import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.MimeTypeMap;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class ActivityMain extends AppCompatActivity {
 

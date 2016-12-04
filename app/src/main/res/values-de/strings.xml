@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">Wikipedia Spiel</string>
+    <string name="app_name">WikiSpiel</string>
     <string name="random_article" formatted="false">https://de.m.wikipedia.org/wiki/Spezial:Zuf%C3%A4llige_Seite/</string>
     <string name="won_title" formatted="false">Gewonnen in %d Schritten</string>
     <string name="share">Teilen</string>
-    <string name="share_body" formatted="false">Ich habe gerade das Wikipedia Spiel in %d Schritten gewonnen!\n\n%s</string>
+    <string name="share_body" formatted="false">Ich habe gerade das WikiSpiel in %d Schritten gewonnen!\n\n%s</string>
     <string name="blocked_external">Externe Seite gesperrt</string>
     <string name="blocked_click">Klick gesperrt</string>
     <string name="please_start">Bitte Spiel starten</string>
