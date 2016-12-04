@@ -48,11 +48,7 @@ public class ActivityMain extends AppCompatActivity {
         wv = (WebView) findViewById(R.id.webview);
 
         String action = getIntent().getAction();
-        if (Intent.ACTION_VIEW.equals(action)){
-            Uri uri = getIntent().getData();
-            String status = uri.toString().replace("wikigame://", "");
-            deserializeState(status);
-        } else if (savedInstanceState != null) {
+        if (savedInstanceState != null) {
             steps = savedInstanceState.getInt("steps");
             history = savedInstanceState.getString("history");
             findURL = savedInstanceState.getString("findURL");
@@ -64,6 +60,10 @@ public class ActivityMain extends AppCompatActivity {
                 getSupportActionBar().setTitle(getString(R.string.app_name) + " (" + steps + ")");
                 steps--;
             }
+        } else if (Intent.ACTION_VIEW.equals(action)){
+            Uri uri = getIntent().getData();
+            String status = uri.toString().replace("wikigame://", "");
+            deserializeState(status);
         } else {
             state = State.RANDOM;
             wv.loadUrl(RANDOM_ARTICLE);
