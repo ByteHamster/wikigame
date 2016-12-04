@@ -15,4 +15,6 @@
     <string name="send">Spielstand senden</string>
     <string name="history">Verlauf</string>
     <string name="no_qr">Bitte den zxing barcode scanner herunterladen</string>
+    <string name="search">Suche</string>
+    <string name="next">Weiter</string>
 </resources>

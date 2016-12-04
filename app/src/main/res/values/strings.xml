@@ -15,4 +15,6 @@
     <string name="send">Send game state</string>
     <string name="history">History</string>
     <string name="no_qr">Please download zxing barcode scanner</string>
+    <string name="search">Search</string>
+    <string name="next">Next</string>
 </resources>

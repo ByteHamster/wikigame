@@ -1,5 +1,6 @@
 package com.bytehamster.wikigame;
 
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,9 +17,12 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 
 public class ActivityMain extends AppCompatActivity {
 
@@ -33,6 +37,7 @@ public class ActivityMain extends AppCompatActivity {
     String history = "";
     final String magicNumber = "Δ";
     boolean shouldAppendHistory = false;
+    String lastFind = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -235,9 +240,35 @@ public class ActivityMain extends AppCompatActivity {
             }
         } else if (item.getItemId() == R.id.history) {
             AlertDialog.Builder b = new AlertDialog.Builder(ActivityMain.this);
-            b.setTitle(getString(R.string.history));
+            b.setTitle(R.string.history);
             b.setMessage(history);
             b.show();
+        } else if (item.getItemId() == R.id.search) {
+            final Dialog dialog = new Dialog(ActivityMain.this);
+            dialog.setContentView(R.layout.search);
+
+            final EditText edit = (EditText) dialog.findViewById(R.id.editText);
+            edit.setText(lastFind);
+            dialog.findViewById(R.id.button_cancel).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.findViewById(R.id.button_search).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    lastFind = edit.getText().toString();
+
+                    wv.findAll(lastFind);
+                    try{
+                        Method m = WebView.class.getMethod("setFindIsUp", Boolean.TYPE);
+                        m.invoke(wv, true);
+                    } catch(Exception ignored){}
+                }
+            });
+
+            dialog.show();
         }
         return super.onOptionsItemSelected(item);
     }
