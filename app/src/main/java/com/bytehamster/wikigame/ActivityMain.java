@@ -187,6 +187,7 @@ public class ActivityMain extends AppCompatActivity {
                     history = "";
                     findURL = "";
                     steps = -2;
+                    shouldAppendHistory = false;
                     getSupportActionBar().setTitle(getString(R.string.app_name));
                     wv.loadUrl(RANDOM_ARTICLE);
                     findViewById(R.id.fab).setVisibility(View.VISIBLE);
