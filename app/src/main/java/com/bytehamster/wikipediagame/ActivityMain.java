@@ -1,5 +1,6 @@
 package com.bytehamster.wikipediagame;
 
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -39,6 +40,7 @@ public class ActivityMain extends AppCompatActivity {
     String RANDOM_ARTICLE = "";
     String history = "";
     final String magicNumber = "Δ";
+    boolean shouldAppendHistory = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,11 +72,16 @@ public class ActivityMain extends AppCompatActivity {
             wv.loadUrl(RANDOM_ARTICLE);
         }
 
-
-
         WebSettings webSettings = wv.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
+        wv.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return true;
+            }
+        });
+        wv.setLongClickable(false);
 
         wv.setWebViewClient(new WebViewClient() {
             @Override
@@ -97,6 +104,7 @@ public class ActivityMain extends AppCompatActivity {
                 } else if(url.equals(findURL)) {
                     steps++;
                     state = State.FOUND;
+                    history += view.getTitle().replace(" – Wikipedia", "") + "\n";
                     AlertDialog.Builder b = new AlertDialog.Builder(ActivityMain.this);
                     b.setTitle(getString(R.string.won_title, steps));
                     b.setMessage(history);
@@ -115,6 +123,7 @@ public class ActivityMain extends AppCompatActivity {
                     b.show();
                 } else {
                     steps++;
+                    shouldAppendHistory = true;
                     getSupportActionBar().setTitle(getString(R.string.app_name) + " (" + steps + ")");
                 }
             }
@@ -143,8 +152,9 @@ public class ActivityMain extends AppCompatActivity {
                 wv.setEnabled(true);
                 wv.setAlpha(1.0f);
 
-                if(!view.getTitle().equals(RANDOM_ARTICLE) && !url.equals(findURL)) {
+                if(!view.getTitle().equals(RANDOM_ARTICLE) && !url.equals(findURL) && shouldAppendHistory) {
                     history += view.getTitle().replace(" – Wikipedia", "") + "\n";
+                    shouldAppendHistory = false;
                 }
             }
         });
@@ -212,13 +222,22 @@ public class ActivityMain extends AppCompatActivity {
                 return true;
             }
 
-            Intent intent = new Intent("com.google.zxing.client.android.ENCODE");
-            intent.addCategory(Intent.CATEGORY_DEFAULT);
-            intent.putExtra("ENCODE_FORMAT", "QR_CODE");
-            intent.putExtra("ENCODE_TYPE", "TEXT_TYPE");
-            intent.putExtra("ENCODE_DATA", "wikigame://" + serializeState());
-            intent.putExtra("ENCODE_SHOW_CONTENTS", false);
-            startActivity(intent);
+            try {
+                Intent intent = new Intent("com.google.zxing.client.android.ENCODE");
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                intent.putExtra("ENCODE_FORMAT", "QR_CODE");
+                intent.putExtra("ENCODE_TYPE", "TEXT_TYPE");
+                intent.putExtra("ENCODE_DATA", "wikigame://" + serializeState());
+                intent.putExtra("ENCODE_SHOW_CONTENTS", false);
+                startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(this, R.string.no_qr, Toast.LENGTH_SHORT).show();
+            }
+        } else if (item.getItemId() == R.id.history) {
+            AlertDialog.Builder b = new AlertDialog.Builder(ActivityMain.this);
+            b.setTitle(getString(R.string.history));
+            b.setMessage(history);
+            b.show();
         }
         return super.onOptionsItemSelected(item);
     }

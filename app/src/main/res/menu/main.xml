@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/restart" android:title="@string/restart" />
     <item android:id="@+id/goal" android:title="@string/target" />
+    <item android:id="@+id/history" android:title="@string/history" />
     <item android:id="@+id/send" android:title="@string/send" />
 </menu>
