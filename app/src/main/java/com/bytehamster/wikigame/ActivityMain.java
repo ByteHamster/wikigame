@@ -96,27 +96,15 @@ public class ActivityMain extends AppCompatActivity {
                 } else if(url.equals(findURL)) {
                     steps++;
                     state = State.FOUND;
-                    history += view.getTitle().replace(" – Wikipedia", "") + "\n";
-                    AlertDialog.Builder b = new AlertDialog.Builder(ActivityMain.this);
-                    b.setTitle(getString(R.string.won_title, steps));
-                    b.setMessage(history);
-                    b.setCancelable(false);
-                    b.setNegativeButton(android.R.string.ok, null);
-                    b.setPositiveButton(R.string.share, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String shareBody = getString(R.string.share_body, steps, history);
-                            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-                            sharingIntent.setType("text/plain");
-                            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-                            startActivity(Intent.createChooser(sharingIntent, getString(R.string.share)));
-                        }
-                    });
-                    b.show();
+                    shouldAppendHistory = true;
                 } else {
                     steps++;
                     shouldAppendHistory = true;
                     getSupportActionBar().setTitle(getString(R.string.app_name) + " (" + steps + ")");
+                }
+
+                if (url.equals(wv.getUrl())) {
+                    shouldAppendHistory = false;
                 }
             }
 
@@ -147,6 +135,25 @@ public class ActivityMain extends AppCompatActivity {
                 if(!view.getTitle().equals(RANDOM_ARTICLE) && !url.equals(findURL) && shouldAppendHistory) {
                     history += view.getTitle().replace(" – Wikipedia", "") + "\n";
                     shouldAppendHistory = false;
+                } else if(state == State.FOUND && shouldAppendHistory) {
+                    shouldAppendHistory = false;
+                    history += view.getTitle().replace(" – Wikipedia", "") + "\n";
+                    AlertDialog.Builder b = new AlertDialog.Builder(ActivityMain.this);
+                    b.setTitle(getString(R.string.won_title, steps));
+                    b.setMessage(history);
+                    b.setCancelable(false);
+                    b.setNegativeButton(android.R.string.ok, null);
+                    b.setPositiveButton(R.string.share, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String shareBody = getString(R.string.share_body, steps, history);
+                            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                            sharingIntent.setType("text/plain");
+                            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                            startActivity(Intent.createChooser(sharingIntent, getString(R.string.share)));
+                        }
+                    });
+                    b.show();
                 }
             }
         });
