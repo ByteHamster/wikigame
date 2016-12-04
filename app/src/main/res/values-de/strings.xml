@@ -12,4 +12,5 @@
     <string name="close_warning">Spiel wird beendet.</string>
     <string name="target">Zielseite</string>
     <string name="restart">Neustart</string>
+    <string name="send">Spielstand senden</string>
 </resources>

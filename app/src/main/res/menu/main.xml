@@ -3,4 +3,5 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/restart" android:title="@string/restart" />
     <item android:id="@+id/goal" android:title="@string/target" />
+    <item android:id="@+id/send" android:title="@string/send" />
 </menu>

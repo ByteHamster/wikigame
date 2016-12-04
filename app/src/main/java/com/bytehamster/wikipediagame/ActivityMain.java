@@ -3,6 +3,7 @@ package com.bytehamster.wikipediagame;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -36,6 +38,7 @@ public class ActivityMain extends AppCompatActivity {
     WebView wv;
     String RANDOM_ARTICLE = "";
     String history = "";
+    final String magicNumber = "Δ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,12 @@ public class ActivityMain extends AppCompatActivity {
         RANDOM_ARTICLE = getString(R.string.random_article);
         wv = (WebView) findViewById(R.id.webview);
 
-        if (savedInstanceState != null) {
+        String action = getIntent().getAction();
+        if (Intent.ACTION_VIEW.equals(action)){
+            Uri uri = getIntent().getData();
+            String status = uri.toString().replace("wikigame://", "");
+            deserializeState(status);
+        } else if (savedInstanceState != null) {
             steps = savedInstanceState.getInt("steps");
             history = savedInstanceState.getString("history");
             findURL = savedInstanceState.getString("findURL");
@@ -198,6 +206,19 @@ public class ActivityMain extends AppCompatActivity {
             b.setView(v);
             b.show();
             return true;
+        } else if (item.getItemId() == R.id.send) {
+            if(state != State.FIND) {
+                Toast.makeText(this, R.string.please_start, Toast.LENGTH_SHORT).show();
+                return true;
+            }
+
+            Intent intent = new Intent("com.google.zxing.client.android.ENCODE");
+            intent.addCategory(Intent.CATEGORY_DEFAULT);
+            intent.putExtra("ENCODE_FORMAT", "QR_CODE");
+            intent.putExtra("ENCODE_TYPE", "TEXT_TYPE");
+            intent.putExtra("ENCODE_DATA", "wikigame://" + serializeState());
+            intent.putExtra("ENCODE_SHOW_CONTENTS", false);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -224,6 +245,36 @@ public class ActivityMain extends AppCompatActivity {
         savedInstanceState.putString("history", history);
         savedInstanceState.putString("findURL", findURL);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    String serializeState() {
+        String str = steps + magicNumber + toInt(state) + magicNumber + wv.getUrl() + magicNumber
+                + history + magicNumber + findURL + magicNumber;
+        try {
+            return Base64.encodeToString(str.getBytes("UTF-8"), Base64.DEFAULT);
+        } catch (UnsupportedEncodingException e) {
+            return "error";
+        }
+    }
+
+    void deserializeState(String string) {
+        try {
+            string = new String(Base64.decode(string, Base64.DEFAULT), "UTF-8");
+            String data[] = string.split(magicNumber);
+            steps = Integer.valueOf(data[0]);
+            state = toState(Integer.valueOf(data[1]));
+            wv.loadUrl(data[2]);
+            history = data[3];
+            findURL = data[4];
+
+            if (state == State.FIND) {
+                findViewById(R.id.fab).setVisibility(View.GONE);
+                getSupportActionBar().setTitle(getString(R.string.app_name) + " (" + steps + ")");
+                steps--;
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     private int toInt(State state) {

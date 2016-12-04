@@ -12,4 +12,5 @@
     <string name="close_warning">Game will be closed.</string>
     <string name="target">Target page</string>
     <string name="restart">Restart</string>
+    <string name="send">Send game state</string>
 </resources>
